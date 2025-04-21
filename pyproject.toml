@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "deducto"
+version = "0.1.0"
+description = ""
+authors = ["salastro <salah2112004@gmail.com>"]
+readme = "README.md"
+packages = [{include = "deducto", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
