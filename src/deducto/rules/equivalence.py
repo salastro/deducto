@@ -19,3 +19,129 @@ def associative_and(expr: And) -> And:
         raise TypeError("Expected the left operand to be an instance of And")
     return And(expr.left.left, And(expr.left.right, expr.right))
     
+def commutative_or(expr: Or) -> Or:
+    """
+    Or(a, b) = Or(b, a)
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    return Or(expr.right, expr.left)
+
+def associative_or(expr: Or) -> Or:
+    """
+    Or(Or(a, b), c) = Or(a, Or(b, c))
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    if not isinstance(expr.left, Or):
+        raise TypeError("Expected the left operand to be an instance of Or")
+    return Or(expr.left.left, Or(expr.left.right, expr.right))
+
+def distributive_and(expr: And) -> Or:
+    """
+    Distributive property of And over Or
+    And(a, Or(b, c)) = Or(And(a, b), And(a, c))
+    """
+    if not isinstance(expr, And):
+        raise TypeError("Expected an instance of And")
+    if not isinstance(expr.right, Or):
+        raise TypeError("Expected the left operand to be an instance of Or")
+    return Or(And(expr.left, expr.right.left), And(expr.left, expr.right.right))
+
+def distributive_or(expr: Or) -> And:
+    """
+    Distributive property of Or over And
+    Or(a, And(b, c)) = And(Or(a, b), Or(a, c))
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    if not isinstance(expr.right, And):
+        raise TypeError("Expected the left operand to be an instance of And")
+    return And(Or(expr.left, expr.right.left), Or(expr.left, expr.right.right))
+
+def idempotent(expr: Expr) -> Expr:
+    """
+    Idempotent property of And and Or
+    And(a, a) = a
+    Or(a, a) = a
+    """
+    if not isinstance(expr, And) and not isinstance(expr, Or):
+        raise TypeError("Expected an instance of And or Or")
+    if expr.left != expr.right:
+        raise ValueError("Operands are not equal")
+    return expr.left
+
+def absorption_and(expr: And) -> Expr:
+    """
+    Absorption property
+    And(a, Or(a, b)) = a
+    """
+    if not isinstance(expr, And):
+        raise TypeError("Expected an instance of And")
+    if not isinstance(expr.right, Or):
+        raise TypeError("Expected the right operand to be an instance of Or")
+    if expr.left != expr.right.left:
+        raise ValueError("Operands are not equal")
+    return expr.left
+
+def absorption_or(expr: Or) -> Expr:
+    """
+    Absorption property
+    Or(a, And(a, b)) = a
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    if not isinstance(expr.right, And):
+        raise TypeError("Expected the right operand to be an instance of And")
+    if expr.left != expr.right.left:
+        raise ValueError("Operands are not equal")
+    return expr.left
+
+def demorgan_and(expr: And) -> Or:
+    """
+    De Morgan's law for And
+    Not(And(a, b)) = Or(Not(a), Not(b))
+    """
+    if not isinstance(expr, And):
+        raise TypeError("Expected an instance of And")
+    return Or(Not(expr.left), Not(expr.right))
+
+def demorgan_or(expr: Or) -> And:
+    """
+    De Morgan's law for Or
+    Not(Or(a, b)) = And(Not(a), Not(b))
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    return And(Not(expr.left), Not(expr.right))
+
+def negation(expr: Expr) -> Expr:
+    """
+    Negation property
+    Not(Not(a)) = a
+    """
+    if not isinstance(expr, Not):
+        raise TypeError("Expected an instance of Not")
+    return expr.operand
+
+def identity_or(expr: Or) -> Expr:
+    """
+    Identity Law of Or
+    Or(a, False) = a
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    if expr.right != FalseExpr:
+        raise ValueError("Right operand is not False")
+    return expr.left
+
+def identity_and(expr: And) -> Expr:
+    """
+    Identity Law of And
+    And(a, True) = a
+    """
+    if not isinstance(expr, And):
+        raise TypeError("Expected an instance of And")
+    if expr.right != TrueExpr:
+        raise ValueError("Right operand is not True")
+    return expr.left
