@@ -11,6 +11,8 @@ TOKEN_SPEC = [
     (r'→|->|IMPLIES', 'IMPLIES'),
     (r'↔|<->|IFF', 'IFF'),
     (r'⊕|\^|XOR', 'XOR'),
+    (r'TRUE|T', 'TRUE'),
+    (r'FALSE|F', 'FALSE'),
     (r'[A-Za-z_][A-Za-z0-9_]*', 'VAR'),
 ]
 
@@ -110,6 +112,13 @@ class Parser:
             expr = self.parse()
             self.expect('RPAREN')
             return expr
+        # Handle True and False literals
+        if token.type == 'TRUE':
+            self.advance()
+            return TrueExpr()
+        if token.type == 'FALSE':
+            self.advance()
+            return FalseExpr()
         raise SyntaxError(f"Unexpected token: {token}")
 
 def parse(text: str) -> Expr:
