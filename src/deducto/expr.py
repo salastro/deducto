@@ -1,7 +1,4 @@
-from abc import ABC, abstractmethod
-
-class Expr(ABC):
-    @abstractmethod
+class Expr:
     def __str__(self):
         """
         Returns a string stresentation of the object.
