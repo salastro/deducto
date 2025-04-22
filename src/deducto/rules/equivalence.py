@@ -145,3 +145,12 @@ def identity_and(expr: And) -> Expr:
     if expr.right != TrueExpr:
         raise ValueError("Right operand is not True")
     return expr.left
+
+def material_implication(expr: Implies) -> Or:
+    """
+    Material implication:
+    Implies(P, Q) ≡ Or(Not(P), Q)
+    """
+    if not isinstance(expr, Implies):
+        raise TypeError("Expected an instance of Implies")
+    return Or(Not(expr.left), expr.right)
