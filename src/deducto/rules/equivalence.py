@@ -2,7 +2,7 @@ from deducto.expr import *
 
 def commutative_and(expr: And) -> And:
     """
-    Commutative property of And
+    And(a, b) = And(b, a)
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -11,7 +11,7 @@ def commutative_and(expr: And) -> And:
 
 def associative_and(expr: And) -> And:
     """
-    Associative property of And
+    And(And(a, b), c) = And(a, And(b, c))
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -148,14 +148,55 @@ def identity_and(expr: And) -> Expr:
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
-    if expr.right != TrueExpr:
+    if expr.right != TrueExpr():
         raise ValueError("Right operand is not True")
     return expr.left
 
+def domination_or(expr: Or) -> TrueExpr:
+    """
+    Domination Law of Or
+    Or(a, True) = True
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    if expr.right != TrueExpr():
+        raise ValueError("Right operand is not True")
+    return TrueExpr()
+
+def domination_and(expr: And) -> FalseExpr:
+    """
+    Domination Law of And
+    And(a, False) = False
+    """
+    if not isinstance(expr, And):
+        raise TypeError("Expected an instance of And")
+    if expr.right != FalseExpr:
+        raise ValueError("Right operand is not False")
+    return FalseExpr()
+
+def contradiction(expr: And) -> FalseExpr:
+    """
+    And(a, Not(a)) = False
+    """
+    if not isinstance(expr, And):
+        raise TypeError("Expected an instance of And")
+    if expr.right != FalseExpr:
+        raise ValueError("Right operand is not False")
+    return FalseExpr()
+
+def excluded_middle(expr: Or) -> TrueExpr:
+    """
+    Or(a, Not(a)) = True
+    """
+    if not isinstance(expr, Or):
+        raise TypeError("Expected an instance of Or")
+    if expr.right != Not(expr.left):
+        raise ValueError("Right operand is not the negation of the left operand")
+    return TrueExpr()
+
 def material_implication(expr: Implies) -> Or:
     """
-    Material implication:
-    Implies(P, Q) ≡ Or(Not(P), Q)
+    Implies(P, Q) = Or(Not(P), Q)
     """
     if not isinstance(expr, Implies):
         raise TypeError("Expected an instance of Implies")
