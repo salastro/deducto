@@ -114,7 +114,7 @@ class TrueExpr(Expr):
         pass
 
     def __str__(self):
-        return "T"
+        return "𝗧"
 
     def __eq__(self, other):
         if not isinstance(other, TrueExpr):
@@ -126,7 +126,7 @@ class FalseExpr(Expr):
         pass
 
     def __str__(self):
-        return "F"
+        return "𝗙"
 
     def __eq__(self, other):
         if not isinstance(other, FalseExpr):
