@@ -112,7 +112,7 @@ class Parser:
             return expr
         raise SyntaxError(f"Unexpected token: {token}")
 
-def parse(text):
+def parse(text: str) -> Expr:
     return Parser(tokenize(text)).parse()
 
 if __name__ == '__main__':
