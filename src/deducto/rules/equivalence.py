@@ -154,3 +154,19 @@ def material_implication(expr: Implies) -> Or:
     if not isinstance(expr, Implies):
         raise TypeError("Expected an instance of Implies")
     return Or(Not(expr.left), expr.right)
+
+def biconditional_elimination(expr: Iff) -> And:
+    """
+    Iff(P, Q) = And(Implies(P, Q), Implies(Q, P))
+    """
+    if not isinstance(expr, Iff):
+        raise TypeError("Expected an instance of Iff")
+    return And(Implies(expr.left, expr.right), Implies(expr.right, expr.left))
+
+def xor_decomposition(expr: Xor) -> Or:
+    """
+    Xor(P, Q) = And(Or(P, Q), Not(And(P, Q)))
+    """
+    if not isinstance(expr, Xor):
+        raise TypeError("Expected an instance of Xor")
+    return And(Or(expr.left, expr.right), Not(And(expr.left, expr.right)))
