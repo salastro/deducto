@@ -97,23 +97,29 @@ def absorption_or(expr: Or) -> Expr:
         raise ValueError("Operands are not equal")
     return expr.left
 
-def demorgan_and(expr: And) -> Or:
+def demorgan_and(expr: Not) -> Or:
     """
     De Morgan's law for And
     Not(And(a, b)) = Or(Not(a), Not(b))
     """
-    if not isinstance(expr, And):
+    if not isinstance(expr, Not):
         raise TypeError("Expected an instance of And")
-    return Or(Not(expr.left), Not(expr.right))
+    operand = expr.operand
+    if not isinstance(operand, And):
+        raise TypeError("Expected the operand to be an instance of And")
+    return Or(Not(operand.left), Not(operand.right))
 
-def demorgan_or(expr: Or) -> And:
+def demorgan_or(expr: Not) -> And:
     """
     De Morgan's law for Or
     Not(Or(a, b)) = And(Not(a), Not(b))
     """
-    if not isinstance(expr, Or):
+    if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Or")
-    return And(Not(expr.left), Not(expr.right))
+    operand = expr.operand
+    if not isinstance(operand, Or):
+        raise TypeError("Expected the operand to be an instance of Or")
+    return And(Not(operand.left), Not(operand.right))
 
 def negation(expr: Expr) -> Expr:
     """
