@@ -30,8 +30,8 @@ class And(Expr):
         self.right = right
 
     def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) else f"({self.right})"
+        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
+        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
         return f"{left_str} ∧ {right_str}"
 
 class Or(Expr):
@@ -40,8 +40,8 @@ class Or(Expr):
         self.right = right
 
     def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) else f"({self.right})"
+        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
+        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
         return f"{left_str} ∨ {right_str}"
 
 class Implies(Expr):
@@ -50,18 +50,18 @@ class Implies(Expr):
         self.right = right
 
     def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) else f"({self.right})"
+        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
+        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
         return f"{left_str} → {right_str}"
 
-class IFF(Expr):
+class Iff(Expr):
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
     def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) else f"({self.right})"
+        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
+        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
         return f"{left_str} ↔ {right_str}"
 
 class Xor(Expr):
@@ -70,8 +70,8 @@ class Xor(Expr):
         self.right = right
 
     def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) else f"({self.right})"
+        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
+        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
         return f"{left_str} ⊕ {right_str}"
 
 class TrueExpr(Expr):
