@@ -121,14 +121,14 @@ def demorgan_or(expr: Not) -> And:
         raise TypeError("Expected the operand to be an instance of Or")
     return And(Not(operand.left), Not(operand.right))
 
-def negation(expr: Expr) -> Expr:
+def negation(expr: Not) -> Expr:
     """
     Negation property
     Not(Not(a)) = a
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Not")
-    return expr.operand
+    return expr.operand.operand
 
 def identity_or(expr: Or) -> Expr:
     """
