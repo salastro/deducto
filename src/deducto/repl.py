@@ -1,6 +1,3 @@
-from deducto.parser import parse
-from copy import deepcopy
-
 def resolve_path(expr, path):
     """Access a nested attribute path like ['left', 'right']"""
     for attr in path:

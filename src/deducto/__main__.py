@@ -3,7 +3,9 @@ from deducto.rules.inference import *
 from deducto.rules.equivalence import *
 from deducto.rules.apply import *
 from deducto.parser import parse
-from deducto.utils import *
+from deducto.repl import *
+from copy import deepcopy
+
 
 if __name__ == '__main__':
 # Input variables
