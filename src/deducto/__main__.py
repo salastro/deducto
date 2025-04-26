@@ -7,6 +7,8 @@ from deducto.repl import *
 from copy import deepcopy
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
+from deducto.proof import ProofState, ProofStep
+
 
 def all_paths(expr, prefix=""):
     paths = []
@@ -39,7 +41,7 @@ if __name__ == '__main__':
     print(f"Variables: {variables}")
 
     operators = ["->", "<->", "&", "|", "!", "^", "T", "F"]
-    input_completer = WordCompleter(variables+operators, ignore_case=True)
+    input_completer = WordCompleter(variables + operators, ignore_case=True)
     input_session = PromptSession(completer=input_completer)
 
     # Input premises
@@ -63,52 +65,83 @@ if __name__ == '__main__':
     else:
         print("No goal provided.")
 
-    # Update completer dynamically for premises references
+    # ProofState
+    proof = ProofState(premises, goal)
+    initial_steps = deepcopy(proof.steps)  # For reset
+
+    # Update completer dynamically
     def update_rule_completer():
         rule_names = list_rules()
-        premise_refs = [str(i+1) for i in range(len(premises))]
-        rule_completer.words = rule_names + premise_refs + [f"{i+1}.{path}" for i, p in enumerate(premises) for path in all_paths(p)]
+        step_refs = [str(i+1) for i in range(len(proof.steps))]
+        subpaths = [f"{i+1}.{path}" for i, step in enumerate(proof.steps) for path in all_paths(step.result)]
+        rule_completer.words = rule_names + step_refs + subpaths + ['undo', 'delete', 'reset', 'exit']
 
-    # REPL loop
+    print("Commands: [rule targets], undo, delete n, reset, exit")
+
     while True:
         try:
             update_rule_completer()
-            cmd = rule_session.prompt("Enter rule to apply (or 'exit' to quit): ").strip()
+            cmd = rule_session.prompt("Apply: ").strip()
             if cmd.lower() == 'exit':
                 break
+
+            if cmd.lower() == 'undo':
+                if len(proof.steps) > len(initial_steps):
+                    proof.steps.pop()
+                    print("Undone last operation.")
+                else:
+                    print("Nothing to undo.")
+                proof.show()
+                continue
+
+            if cmd.lower().startswith('delete '):
+                try:
+                    n = int(cmd.split()[1]) - 1
+                    if n >= len(initial_steps):
+                        proof.steps.pop(n)
+                        print(f"Deleted step {n + 1}.")
+                    else:
+                        print("Cannot delete original assumptions.")
+                except Exception as e:
+                    print(f"Invalid delete command: {e}")
+                proof.show()
+                continue
+
+            if cmd.lower() == 'reset':
+                proof.steps = deepcopy(initial_steps)
+                print("Reset to original assumptions.")
+                proof.show()
+                continue
 
             parts = cmd.split()
             rule = parts[0]
             targets = parts[1:]
 
-            results = []
-            for ref in targets:
-                if '.' in ref:
-                    idx, path = parse_path(ref)
-                    expr = deepcopy(premises[idx])  # to avoid mutating the original
-                    subexpr = resolve_path(expr, path)
-                    result = apply_rule(rule, [subexpr])
-                    if result is None:
-                        raise ValueError(f"Rule '{rule}' not applicable at {ref}")
-                    set_path(expr, path, result)
-                    results.append(expr)
-                else:
-                    idx = int(ref) - 1
-                    results.append(premises[idx])
+            if not targets:
+                print("No targets specified.")
+                continue
 
-            result = results[0] if len(results) == 1 and '.' in targets[0] else apply_rule(rule, results)
-
-            if result is None:
-                print(f"Rule '{rule}' not applicable.")
-            else:
-                print(f"Result: {result}")
-                if result == goal:
-                    print("\u2713 Goal reached!")
+            if '.' in targets[0]:  # If targeting subexpression
+                idx, path = parse_path(targets[0])
+                expr = deepcopy(proof.steps[idx].result)
+                subexpr = resolve_path(expr, path)
+                result = apply_rule(rule, [subexpr])
+                if result is None:
+                    raise ValueError(f"Rule '{rule}' not applicable at {targets[0]}")
+                set_path(expr, path, result)
+                proof.steps.append(ProofStep(expr, f"{rule} at {idx+1}.{path}", [idx]))
+                if expr == proof.goal:
+                    print("✓ Goal reached!")
+                    proof.show()
                     break
-                premises.append(result)
-                print("Premises:")
-                for i, p in enumerate(premises):
-                    print(f"  {i + 1}. {p}")
+            else:
+                premise_indices = [int(t) - 1 for t in targets]
+                success = proof.try_rule(rule, premise_indices)
+                if success and proof.steps[-1].result == proof.goal:
+                    proof.show()
+                    break
+
+            proof.show()
 
         except EOFError:
             confirm = input("\nExit? (y/n): ")
