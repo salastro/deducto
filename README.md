@@ -1,5 +1,7 @@
 # Deducto
 
+![Deducto Logo](logo.png)
+
 Deducto is an interactive proof assistant built to assist in logical reasoning. It provides a REPL interface for users to input premises, set goals, and apply logical rules to derive conclusions. It offers a dynamic environment for users to step through logical reasoning using custom rules and operators, supporting undo, delete, and reset functionality.
 
 ## Features
