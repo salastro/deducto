@@ -170,7 +170,7 @@ def domination_and(expr: And) -> FalseExpr:
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
-    if expr.right != FalseExpr:
+    if expr.right != FalseExpr():
         raise ValueError("Right operand is not False")
     return FalseExpr()
 
@@ -180,7 +180,7 @@ def contradiction(expr: And) -> FalseExpr:
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
-    if expr.right != FalseExpr:
+    if expr.right != Not(expr.left):
         raise ValueError("Right operand is not False")
     return FalseExpr()
 
