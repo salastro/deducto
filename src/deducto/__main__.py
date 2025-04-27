@@ -29,7 +29,7 @@ def all_paths(expr, prefix=""):
 
     return paths
 
-if __name__ == '__main__':
+def main():
     # Prompt toolkit setup
     rule_completer = WordCompleter(list_rules(), ignore_case=True)
     rule_session = PromptSession(completer=rule_completer)
@@ -152,3 +152,7 @@ if __name__ == '__main__':
 
         except Exception as e:
             print(f"Invalid: {e}")
+    
+
+if __name__ == '__main__':
+    main()
