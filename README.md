@@ -84,7 +84,7 @@ Proof Steps:
 
 If you'd like to contribute to the project, feel free to fork the repository and submit a pull request with your changes.
 
-For more detailed information on contributing, check the [Contributing guidelines](https://github.com/salastro/deducto/blob/main/CONTRIBUTING.md).
+For more detailed information on contributing, check the [Contributing guidelines](CONTRIBUTING.md).
 
 ## License
 
