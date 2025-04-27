@@ -44,7 +44,7 @@ Ensure you have Python 3.7 or higher installed. Then, install Poetry by followin
 After installation, you can run the program by executing the following command:
 
 ```bash
-poetry run python main.py
+poetry run deducto
 ```
 
 This will start the interactive REPL, where you can:
