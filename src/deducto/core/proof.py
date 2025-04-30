@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from deducto.core.expr import *
 from deducto.rules.apply import *
 
@@ -11,9 +11,10 @@ class ProofStep:
     def __str__(self):
         if self.premises:
             premises_str = ', '.join(str(i + 1) for i in self.premises)
-            return f"{self.result}    ({self.rule} from {premises_str})"
+            rule = self.rule.replace("_", " ")
+            return f"{self.result}		({rule} of {premises_str})"
         else:
-            return f"{self.result}    ({self.rule})"
+            return f"{self.result}		({self.rule})"
 
 class ProofState:
     def __init__(self, assumptions: List[Expr], goal: Expr):

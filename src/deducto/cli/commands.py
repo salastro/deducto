@@ -101,6 +101,7 @@ def execute_command(cmd, proof, initial_steps):
             return False
 
         if '.' in targets[0]:  # subexpression
+            node = targets[0][2:]
             idx, path = parse_path(targets[0])
             expr = deepcopy(proof.steps[idx].result)
             subexpr = resolve_path(expr, path)
@@ -108,7 +109,7 @@ def execute_command(cmd, proof, initial_steps):
             if result is None:
                 raise ValueError(f"Rule '{rule}' not applicable at {targets[0]}")
             set_path(expr, path, result)
-            proof.steps.append(ProofStep(expr, f"{rule} at {path}", [idx]))
+            proof.steps.append(ProofStep(expr, f"{rule} at {node}", [idx]))
         else:
             indices = [int(t) - 1 for t in targets]
             proof.try_rule(rule, indices)
