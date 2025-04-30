@@ -12,7 +12,7 @@ from deducto.rules import inference, equivalence
 from typing import List
 import inspect
 
-def list_rules():
+def list_rules() -> List[str]:
     rules = []
     for module in [inference, equivalence]:
         for name in dir(module):

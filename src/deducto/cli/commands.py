@@ -1,13 +1,65 @@
 from copy import deepcopy
-from deducto.rules.apply import apply_rule, list_rules
-from deducto.core.proof import ProofStep
-from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 
-def update_rule_completer(completer, proof):
-    rule_names = list_rules()
-    step_refs = [str(i+1) for i in range(len(proof.steps))]
-    subpaths = [f"{i+1}.{path}" for i, step in enumerate(proof.steps) for path in all_paths(step.result)]
-    completer.words = rule_names + step_refs + subpaths + ['undo', 'delete', 'reset', 'exit']
+from prompt_toolkit.completion import Completer, WordCompleter, NestedCompleter
+from prompt_toolkit.document import Document
+
+from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
+from deducto.core.proof import ProofStep
+from deducto.rules.apply import apply_rule, list_rules
+
+class CommandCompleter(Completer):
+    def __init__(self, proof):
+        self.proof = proof
+        self.rules = list_rules()
+        self.commands = ['apply', 'undo', 'delete', 'reset', 'exit']
+
+    def get_completions(self, document, complete_event):
+        text = document.text_before_cursor.lstrip()
+        stripped_len = len(document.text_before_cursor) - len(text)
+
+        if " " in text:
+            command = text.split()[0]
+            if command in self.commands:
+                remaining_text = text[len(command):].lstrip()
+                move_cursor = len(text) - len(remaining_text) + stripped_len
+
+                new_document = Document(
+                    remaining_text,
+                    cursor_position=document.cursor_position - move_cursor,
+                )
+
+                if command == 'apply':
+                    parts = remaining_text.split()
+                    if not parts:
+                        # Suggest rules only
+                        completer = WordCompleter(self.rules, ignore_case=True)
+                    else:
+                        rule = parts[0]
+                        if rule in self.rules:
+                            # After rule is entered, suggest step refs and subpaths
+                            step_refs = [str(i + 1) for i in range(len(self.proof.steps))]
+                            subpaths = [
+                                f"{i + 1}.{path}"
+                                for i, step in enumerate(self.proof.steps)
+                                for path in all_paths(step.result)
+                            ]
+                            completer = WordCompleter(step_refs + subpaths, ignore_case=True)
+                        else:
+                            # Suggest rules if the entered rule is incomplete or invalid
+                            completer = WordCompleter(self.rules, ignore_case=True)
+
+                    yield from completer.get_completions(new_document, complete_event)
+
+                elif command == 'undo':
+                    pass  # Placeholder for future undo completions
+
+                elif command in ['reset', 'exit']:
+                    pass  # These take no arguments, no completions needed
+
+        else:
+            # Complete command names
+            completer = WordCompleter(self.commands, ignore_case=True)
+            yield from completer.get_completions(document, complete_event)
 
 def execute_command(cmd, proof, initial_steps):
     if cmd.lower() == 'exit':
@@ -38,29 +90,30 @@ def execute_command(cmd, proof, initial_steps):
         print("Reset to original assumptions.")
         return False
 
-    parts = cmd.split()
-    rule = parts[0]
-    targets = parts[1:]
+    if cmd.lower().startswith('apply '):
 
-    if not targets:
-        print("No targets specified.")
-        return False
+        parts = cmd.split()
+        rule = parts[1]
+        targets = parts[2:]
 
-    if '.' in targets[0]:  # subexpression
-        idx, path = parse_path(targets[0])
-        expr = deepcopy(proof.steps[idx].result)
-        subexpr = resolve_path(expr, path)
-        result = apply_rule(rule, [subexpr])
-        if result is None:
-            raise ValueError(f"Rule '{rule}' not applicable at {targets[0]}")
-        set_path(expr, path, result)
-        proof.steps.append(ProofStep(expr, f"{rule} at {path}", [idx]))
-    else:
-        indices = [int(t) - 1 for t in targets]
-        proof.try_rule(rule, indices)
+        if not targets:
+            print("No targets specified.")
+            return False
+
+        if '.' in targets[0]:  # subexpression
+            idx, path = parse_path(targets[0])
+            expr = deepcopy(proof.steps[idx].result)
+            subexpr = resolve_path(expr, path)
+            result = apply_rule(rule, [subexpr])
+            if result is None:
+                raise ValueError(f"Rule '{rule}' not applicable at {targets[0]}")
+            set_path(expr, path, result)
+            proof.steps.append(ProofStep(expr, f"{rule} at {path}", [idx]))
+        else:
+            indices = [int(t) - 1 for t in targets]
+            proof.try_rule(rule, indices)
 
     if proof.goal and proof.steps[-1].result == proof.goal:
-        # print("✓ Goal reached!")
         return True
 
     return False

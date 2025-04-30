@@ -1,15 +1,14 @@
-from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import WordCompleter
 from copy import deepcopy
 
-from deducto.cli.parser import parse
-from deducto.core.proof import ProofState, ProofStep
-from deducto.cli.utils import get_variables, get_premises, get_goal
-from deducto.cli.commands import execute_command, update_rule_completer
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import WordCompleter
+
+from deducto.cli.commands import execute_command, CommandCompleter
+from deducto.cli.utils import get_goal, get_premises, get_variables
+from deducto.core.proof import ProofState
+
 
 def run_proof_session():
-    rule_completer = WordCompleter([], ignore_case=True)
-    rule_session = PromptSession(completer=rule_completer)
 
     variables = get_variables()
     print("\033[F\033[K", end="")
@@ -26,12 +25,14 @@ def run_proof_session():
     proof = ProofState(premises, goal)
     initial_steps = deepcopy(proof.steps)
 
-    print("Commands: [rule targets], undo, delete n, reset, exit")
+    completer = CommandCompleter(proof)
+    session = PromptSession(completer=completer)
+
+    print("Commands: apply <rule> <targets>, undo, delete <n>, reset, exit")
 
     while True:
         try:
-            update_rule_completer(rule_completer, proof)
-            cmd = rule_session.prompt(">>> ").strip()
+            cmd = session.prompt(">>> ").strip()
             if execute_command(cmd, proof, initial_steps):
                 break
             proof.show()
@@ -40,4 +41,3 @@ def run_proof_session():
                 break
         except Exception as e:
             print(f"Invalid: {e}")
-
