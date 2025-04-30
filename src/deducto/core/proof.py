@@ -26,6 +26,7 @@ class ProofState:
         print("\nProof Steps:")
         for i, step in enumerate(self.steps):
             print(f"  {i + 1}. {step}")
+        print(f"Goal: {self.goal}")
 
     def try_rule(self, rule: str, premise_indices: List[int]) -> bool:
         try:
