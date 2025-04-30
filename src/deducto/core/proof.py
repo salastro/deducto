@@ -1,5 +1,5 @@
 from typing import List, Optional
-from deducto.expr import *
+from deducto.core.expr import *
 from deducto.rules.apply import *
 
 class ProofStep:
@@ -24,9 +24,7 @@ class ProofState:
     def show(self):
         print("\nProof Steps:")
         for i, step in enumerate(self.steps):
-            print(f"{i + 1}. {step}")
-        print("\nGoal:")
-        print(f"  {self.goal}")
+            print(f"  {i + 1}. {step}")
 
     def try_rule(self, rule: str, premise_indices: List[int]) -> bool:
         try:
@@ -38,6 +36,7 @@ class ProofState:
             self.steps.append(ProofStep(result, rule, premise_indices))
             if result == self.goal:
                 print("✓ Goal reached!")
+                self.show()
             return True
         except IndexError:
             print("✗ Invalid premise index.")

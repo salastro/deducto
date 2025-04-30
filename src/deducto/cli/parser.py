@@ -1,5 +1,5 @@
 import re
-from deducto.expr import *
+from deducto.core.expr import *
 
 TOKEN_SPEC = [
     (r'\s+', None),           # Skip whitespace

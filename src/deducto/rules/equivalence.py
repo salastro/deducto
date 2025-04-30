@@ -1,4 +1,4 @@
-from deducto.expr import *
+from deducto.core.expr import *
 
 def commutative_and(expr: And) -> And:
     """

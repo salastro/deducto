@@ -7,9 +7,9 @@ commutative_and, commutative_or, demorgan_and, demorgan_or, distributive_and,
 distributive_or, idempotent, identity_and, identity_or, material_implication,
 negation, xor_decomposition.
 """
-from deducto.expr import *
+from deducto.core.expr import *
 from deducto.rules import inference, equivalence
-from typing import List, Optional
+from typing import List
 import inspect
 
 def list_rules():
@@ -140,7 +140,6 @@ if __name__ == '__main__':
             else:
                 print(f"Result: {result}")
                 if result == goal:
-                    print("✓ Goal reached!")
                     break
                 premises.append(result)
                 print("Premises:")
