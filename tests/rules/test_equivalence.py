@@ -1,5 +1,5 @@
 import pytest
-from deducto.expr import *
+from deducto.core.expr import *
 from deducto.rules.equivalence import *
 
 def test_commutative_and():

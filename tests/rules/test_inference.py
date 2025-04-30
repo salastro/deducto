@@ -1,5 +1,5 @@
 import pytest
-from deducto.expr import *
+from deducto.core.expr import *
 from deducto.rules.inference import *
 
 # Test for modus_ponens
