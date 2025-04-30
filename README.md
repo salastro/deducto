@@ -54,8 +54,8 @@ This will start the interactive REPL, where you can:
 - Input variables (e.g., `a, b, c`).
 - Define premises (e.g., `a -> b, b -> c`).
 - Set a goal (e.g., `a -> c`).
+- Use commands like `apply`, `undo`, `delete <step_number>`, `reset`, and `exit`.
 - Apply logical rules to reach conclusions.
-- Use commands like `undo`, `delete <step_number>`, `reset`, and `exit`.
 
 ### Example
 
@@ -65,7 +65,7 @@ Premises:
   1. a → b
   2. b → c
 Goal: a → c
-Apply: hypothetical_syllogism 1 2
+>>> apply hypothetical_syllogism 1 2
 ✓ Goal reached!
 
 Proof Steps:
@@ -76,7 +76,7 @@ Proof Steps:
 
 ## Commands
 
-- **[rule targets]**: Apply a logical rule to the specified targets. Rules include inference and equivalence rules.
+- **apply <rule> <target>**: Apply a logical rule to the specified targets. Rules include inference and equivalence rules.
 - **undo**: Undo the last step.
 - **delete <n>**: Delete the step corresponding to index `n`.
 - **reset**: Reset to the original assumptions (premises).
