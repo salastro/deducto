@@ -50,11 +50,12 @@ class CommandCompleter(Completer):
 
                     yield from completer.get_completions(new_document, complete_event)
 
-                elif command == 'undo':
-                    pass  # Placeholder for future undo completions
+                elif command == 'delete':
+                    # Suggest step refs for delete and undo commands
+                    step_refs = [str(i + 1) for i in range(len(self.proof.steps))]
+                    completer = WordCompleter(step_refs, ignore_case=True)
+                    yield from completer.get_completions(new_document, complete_event)
 
-                elif command in ['reset', 'exit']:
-                    pass  # These take no arguments, no completions needed
 
         else:
             # Complete command names
