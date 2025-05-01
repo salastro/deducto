@@ -63,26 +63,21 @@ class Iff(BinaryOperation):
 class Xor(BinaryOperation):
     INFIX_SYMBOL = "⊕"
 
-class TrueExpr(Expr):
+class ConstantExpr(Expr):
+    INFIX_SYMBOL = None
     def __init__(self):
         pass
 
     def __str__(self):
-        return "𝗧"
+        return str(self.INFIX_SYMBOL)
 
     def __eq__(self, other):
-        if not isinstance(other, TrueExpr):
+        if not isinstance(other, type(self)):
             return False
         return True
 
-class FalseExpr(Expr):
-    def __init__(self):
-        pass
+class TrueExpr(ConstantExpr):
+    INFIX_SYMBOL = "𝗧"
 
-    def __str__(self):
-        return "𝗙"
-
-    def __eq__(self, other):
-        if not isinstance(other, FalseExpr):
-            return False
-        return True
+class FalseExpr(ConstantExpr):
+    INFIX_SYMBOL = "𝗙"
