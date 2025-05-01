@@ -9,6 +9,7 @@ packages = [{include = "deducto", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.13"
 prompt-toolkit = "^3.0.51"
+pylatex = "^1.4.2"
 
 
 [tool.poetry.group.dev.dependencies]
