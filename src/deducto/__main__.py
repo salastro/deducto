@@ -4,4 +4,7 @@ def main():
     run_proof_session()
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        pass

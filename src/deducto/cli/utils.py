@@ -23,6 +23,7 @@ def get_goal(variables):
     goal = input_session.prompt("Goal: ").strip()
     # print("\033[F\033[K", end="")
     return parse(goal) if goal else None
+
 def resolve_path(expr, path):
     """Access a nested attribute path like ['left', 'right']"""
     for attr in path:

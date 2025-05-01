@@ -15,15 +15,31 @@ def clear_line():
 def run_proof_session():
     variables = get_variables()
     clear_line()
-    print("Variables:", variables)
-    premises = get_premises(variables)
+    print("Variables:", ", ".join(variables))
+    while True:
+        try:
+            premises = get_premises(variables)
+            break
+        except SyntaxError as e:
+            print(f"Invalid syntax: {e}")
     clear_line()
-    print("Premises:")
-    for i, premise in enumerate(premises):
-        print(f"  {i + 1}. {premise}")
-    goal = get_goal(variables)
+    if premises:
+        print("Premises:")
+        for i, premise in enumerate(premises):
+            print(f"  {i + 1}. {premise}")
+    else:
+        print("No premises provided")
+    while True:
+        try:
+            goal = get_goal(variables)
+            break
+        except SyntaxError as e:
+            print(f"Invalid syntax: {e}")
     clear_line()
-    print("Goal:", goal)
+    if goal:
+        print("Goal:", goal)
+    else:
+        print("No goal provided")
 
     proof = ProofState(premises, goal)
     initial_steps = deepcopy(proof.steps)
@@ -35,11 +51,13 @@ def run_proof_session():
 
     while True:
         try:
-            cmd = session.prompt(">>> ").strip()
+            cmd = ""
+            while cmd == "":
+                cmd = session.prompt(">>> ").strip()
             if execute_command(cmd, proof, initial_steps):
                 break
             proof.show()
-        except EOFError:
+        except (KeyboardInterrupt, EOFError):
             if input("\nExit? (y/n): ").lower() == 'y':
                 break
         except Exception as e:

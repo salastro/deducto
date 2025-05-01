@@ -28,6 +28,7 @@ def apply_rule(rule: str, premises: List[Expr]) -> Expr:
     :param rule: The name of the rule to apply.
     :param premises: A list of premises (Expr objects).
     :return: The result of applying the rule, or None if not applicable.
+    :raises ValueError: If the rule given does not exist (or at least is not implemented)
     """
     rules = list_rules()
     # Check if the rule exists in the inference or equivalence modules
@@ -37,6 +38,9 @@ def apply_rule(rule: str, premises: List[Expr]) -> Expr:
         if rule_func:
             # Call the function with the premises
             return rule_func(*premises)
+
+    else:
+        raise ValueError(f"Rule '{rule}' does not exist")
 
 # def list_applicable_rules(premises: List[Expr], goal: Expr):
 #     suggestions = []
