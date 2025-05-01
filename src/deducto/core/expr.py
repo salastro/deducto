@@ -18,18 +18,18 @@ class Var(Expr):
         return self.name == other.name
 
 class Not(Expr):
-    def __init__(self, operand):
-        self.operand = operand
+    def __init__(self, negated):
+        self.negated = negated
 
     def __str__(self):
-        if isinstance(self.operand, Var):
-            return f"¬{self.operand}"
-        return f"¬({self.operand})"
+        if isinstance(self.negated, Var):
+            return f"¬{self.negated}"
+        return f"¬({self.negated})"
 
     def __eq__(self, other):
         if not isinstance(other, Not):
             return False
-        return self.operand == other.operand
+        return self.negated == other.negated
 
 class And(Expr):
     def __init__(self, left, right):
