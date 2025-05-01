@@ -31,80 +31,37 @@ class Not(Expr):
             return False
         return self.negated == other.negated
 
-class And(Expr):
+class BinaryOperation(Expr):
+    INFIX_SYMBOL = None # to define in the child classes
+
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
     def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
-        return f"{left_str} ∧ {right_str}"
+        left_str = str(self.left) if isinstance(self.left, (Var, Not)) else f"({self.left})"
+        right_str = str(self.right) if isinstance(self.right, (Var, Not)) else f"({self.right})"
+        return f"{left_str} {self.INFIX_SYMBOL} {right_str}"
 
     def __eq__(self, other):
-        if not isinstance(other, And):
+        if not isinstance(other, type(self)): # not the same type
             return False
         return self.left == other.left and self.right == other.right
 
-class Or(Expr):
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
+class And(BinaryOperation):
+    INFIX_SYMBOL = "∧"
 
-    def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
-        return f"{left_str} ∨ {right_str}"
+class Or(BinaryOperation):
+    INFIX_SYMBOL = "∨"
 
-    def __eq__(self, other):
-        if not isinstance(other, Or):
-            return False
-        return self.left == other.left and self.right == other.right
+class Implies(BinaryOperation):
+    INFIX_SYMBOL = "→"
 
-class Implies(Expr):
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
+class Iff(BinaryOperation):
+    INFIX_SYMBOL = "↔"
 
-    def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
-        return f"{left_str} → {right_str}"
-
-    def __eq__(self, other):
-        if not isinstance(other, Implies):
-            return False
-        return self.left == other.left and self.right == other.right
-
-class Iff(Expr):
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-
-    def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
-        return f"{left_str} ↔ {right_str}"
-
-    def __eq__(self, other):
-        if not isinstance(other, Iff):
-            return False
-        return self.left == other.left and self.right == other.right
-
-class Xor(Expr):
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-
-    def __str__(self):
-        left_str = str(self.left) if isinstance(self.left, Var) or isinstance(self.left, Not) else f"({self.left})"
-        right_str = str(self.right) if isinstance(self.right, Var) or isinstance(self.right, Not) else f"({self.right})"
-        return f"{left_str} ⊕ {right_str}"
-
-    def __eq__(self, other):
-        if not isinstance(other, Xor):
-            return False
-        return self.left == other.left and self.right == other.right
+class Xor(BinaryOperation):
+    INFIX_SYMBOL = "⊕"
 
 class TrueExpr(Expr):
     def __init__(self):
