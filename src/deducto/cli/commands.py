@@ -7,6 +7,7 @@ from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
 from deducto.rules.apply import apply_rule, list_rules
 
+
 class CommandCompleter(Completer):
     def __init__(self, proof):
         self.proof = proof
@@ -114,6 +115,9 @@ def execute_command(cmd, proof, initial_steps):
         else:
             indices = [int(t) - 1 for t in targets]
             proof.try_rule(rule, indices)
+
+    else:
+        raise ValueError("Unknown command")
 
     if proof.goal and proof.steps[-1].result == proof.goal:
         return True
