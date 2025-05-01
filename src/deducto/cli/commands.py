@@ -6,12 +6,13 @@ from prompt_toolkit.document import Document
 from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
 from deducto.rules.apply import apply_rule, list_rules
+from deducto.export.tex import generate_structured_latex_from_proofstate
 
 class CommandCompleter(Completer):
     def __init__(self, proof):
         self.proof = proof
         self.rules = list_rules()
-        self.commands = ['apply', 'undo', 'delete', 'reset', 'exit']
+        self.commands = ['apply', 'undo', 'delete', 'reset', 'exit', 'export']
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor.lstrip()
@@ -62,33 +63,69 @@ class CommandCompleter(Completer):
             completer = WordCompleter(self.commands, ignore_case=True)
             yield from completer.get_completions(document, complete_event)
 
+
+def undo_last_step(proof, initial_steps):
+    if len(proof.steps) > len(initial_steps):
+        proof.steps.pop()
+        print("Undone last operation.")
+    else:
+        print("Nothing to undo.")
+
+def delete_step(proof, n):
+    if n < len(proof.steps):
+        proof.steps.pop(n)
+        print(f"Deleted step {n + 1}.")
+    else:
+        print("Cannot delete original assumptions.")
+
+def reset_proof(proof, initial_steps):
+    proof.steps = deepcopy(initial_steps)
+    print("Reset to original assumptions.")
+
+def export_proof(proof, file):
+    if file.endswith('.txt'):
+        with open(file, "w") as f:
+            f.write(proof.export_plain_text())
+        print(f"✓ Exported to {file}")
+    elif file.endswith('.tex'):
+        with open(file, "w") as f:
+            f.write(proof.export_latex())
+        print(f"✓ Exported to {file}")
+    else:
+        print("✗ Unknown export format. Use: 'export proof.txt' or 'export proof.tex'")
+
 def execute_command(cmd, proof, initial_steps):
     if cmd.lower() == 'exit':
         return True
 
     if cmd.lower() == 'undo':
-        if len(proof.steps) > len(initial_steps):
-            proof.steps.pop()
-            print("Undone last operation.")
-        else:
-            print("Nothing to undo.")
+        undo_last_step(proof, initial_steps)
         return False
 
     if cmd.lower().startswith('delete '):
         try:
             n = int(cmd.split()[1]) - 1
-            if n >= len(initial_steps):
-                proof.steps.pop(n)
-                print(f"Deleted step {n + 1}.")
-            else:
-                print("Cannot delete original assumptions.")
+            delete_step(proof, n)
         except Exception as e:
             print(f"Invalid delete command: {e}")
         return False
 
     if cmd.lower() == 'reset':
-        proof.steps = deepcopy(initial_steps)
-        print("Reset to original assumptions.")
+        reset_proof(proof, initial_steps)
+        return False
+
+    if cmd.lower().startswith('export '):
+        parts = cmd.split()
+        if len(parts) != 3:
+            print("Usage: export <format> <filename>")
+            return False
+        fmt = parts[1]
+        filename = parts[2]
+        if fmt == "tex":
+            generate_structured_latex_from_proofstate(proof, filename)
+            print(f"✓ Exported to {filename}.tex and {filename}.pdf")
+        else:
+            print("Unknown format. Supported formats: tex")
         return False
 
     if cmd.lower().startswith('apply '):
@@ -102,15 +139,15 @@ def execute_command(cmd, proof, initial_steps):
             return False
 
         if '.' in targets[0]:  # subexpression
-            node = targets[0][2:]
-            idx, path = parse_path(targets[0])
+            subnode = '.'.join(targets[0].split('.')[1:])
+            idx, file = parse_path(targets[0])
             expr = deepcopy(proof.steps[idx].result)
-            subexpr = resolve_path(expr, path)
+            subexpr = resolve_path(expr, file)
             result = apply_rule(rule, [subexpr])
             if result is None:
                 raise ValueError(f"Rule '{rule}' not applicable at {targets[0]}")
-            set_path(expr, path, result)
-            proof.steps.append(ProofStep(expr, f"{rule} at {node}", [idx]))
+            set_path(expr, file, result)
+            proof.steps.append(ProofStep(expr, f"{rule} at {subnode}", [idx]))
         else:
             indices = [int(t) - 1 for t in targets]
             proof.try_rule(rule, indices)
