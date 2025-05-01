@@ -104,10 +104,10 @@ def demorgan_and(expr: Not) -> Or:
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of And")
-    operand = expr.operand
-    if not isinstance(operand, And):
+    negated = expr.negated
+    if not isinstance(negated, And):
         raise TypeError("Expected the operand to be an instance of And")
-    return Or(Not(operand.left), Not(operand.right))
+    return Or(Not(negated.left), Not(negated.right))
 
 def demorgan_or(expr: Not) -> And:
     """
@@ -116,10 +116,10 @@ def demorgan_or(expr: Not) -> And:
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Or")
-    operand = expr.operand
-    if not isinstance(operand, Or):
+    negated = expr.negated
+    if not isinstance(negated, Or):
         raise TypeError("Expected the operand to be an instance of Or")
-    return And(Not(operand.left), Not(operand.right))
+    return And(Not(negated.left), Not(negated.right))
 
 def negation(expr: Not) -> Expr:
     """
@@ -128,7 +128,7 @@ def negation(expr: Not) -> Expr:
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Not")
-    return expr.operand.operand
+    return expr.negated.negated
 
 def identity_or(expr: Or) -> Expr:
     """

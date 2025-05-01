@@ -42,10 +42,10 @@ def parse_path(path_str):
 
 def all_paths(expr, prefix=""):
     paths = []
-    if hasattr(expr, 'operand'):
-        path = f"{prefix}operand" if not prefix else f"{prefix}.operand"
+    if hasattr(expr, 'negated'):
+        path = f"{prefix}negated" if not prefix else f"{prefix}.negated"
         paths.append(path)
-        paths.extend(all_paths(expr.operand, path))
+        paths.extend(all_paths(expr.negated, path))
     elif hasattr(expr, 'left') and hasattr(expr, 'right'):
         for attr in ["left", "right"]:
             subexpr = getattr(expr, attr)
