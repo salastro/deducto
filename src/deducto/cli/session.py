@@ -9,18 +9,21 @@ from deducto.core.proof import ProofState
 from deducto.export.tex import generate_structured_latex_from_proofstate
 
 
-def run_proof_session():
-
-    variables = get_variables()
+def clear_line():
+    """Clears one line in the output"""
     print("\033[F\033[K", end="")
+
+def run_proof_session():
+    variables = get_variables()
+    clear_line()
     print("Variables:", variables)
     premises = get_premises(variables)
-    print("\033[F\033[K", end="")
+    clear_line()
     print("Premises:")
     for i, premise in enumerate(premises):
         print(f"  {i + 1}. {premise}")
     goal = get_goal(variables)
-    print("\033[F\033[K", end="")
+    clear_line()
     print("Goal:", goal)
 
     proof = ProofState(premises, goal)
