@@ -18,6 +18,8 @@ def format_expr(expr):
         # .replace("⊤", r"\top ")
         .replace("(", r"\left(")
         .replace(")", r"\right)")
+        .replace("𝗧", r"\mathbf{T}")
+        .replace("𝗙", r"\mathbf{F}")
     )
 
 
