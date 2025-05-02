@@ -110,8 +110,8 @@ def execute_command(cmd, proof, initial_steps):
     if cmd.lower() == 'help':
         print("Commands:")
         print("  apply <rule> <target> - Apply a rule to the specified targets.")
-        print("  goal <expr> - Set the goal expression.")
-        print("  assume <expr> - Add an assumption.")
+        print("  goal <goal> - Set the goal expression.")
+        print("  assume <premise> - Add an assumption.")
         print("  list - List available rules.")
         print("  exact - Check if the goal is reached.")
         print("  undo - Undo the last step.")
@@ -153,7 +153,7 @@ def execute_command(cmd, proof, initial_steps):
 
     if cmd.lower().startswith('goal '):
         if len(parts) < 2:
-            print("Usage: goal <expr>")
+            print("Usage: goal <goal>")
             return False
         goal_str = ' '.join(parts[1:])
         try:
@@ -165,7 +165,7 @@ def execute_command(cmd, proof, initial_steps):
 
     if cmd.lower().startswith('assume '):
         if len(parts) < 2:
-            print("Usage: assume <expr>")
+            print("Usage: assume <premise>")
             return False
         assumption_str = ' '.join(parts[1:])
         if not assumption_str:
