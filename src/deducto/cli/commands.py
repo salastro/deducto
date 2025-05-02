@@ -5,7 +5,7 @@ from prompt_toolkit.document import Document
 
 from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
-from deducto.rules.apply import apply_rule, list_rules
+from deducto.rules.apply import list_rules
 from deducto.export.tex import export_tex
 from deducto.export.txt import export_txt
 from deducto.cli.parser import parse
