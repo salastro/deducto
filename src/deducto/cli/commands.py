@@ -7,6 +7,7 @@ from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
 from deducto.rules.apply import apply_rule, list_rules
 from deducto.export.tex import export_tex
+from deducto.export.txt import export_txt
 from deducto.cli.parser import parse
 
 
@@ -84,17 +85,6 @@ def reset_proof(proof, initial_steps):
     proof.steps = deepcopy(initial_steps)
     print("Reset to original assumptions.")
 
-def export_proof(proof, file):
-    if file.endswith('.txt'):
-        with open(file, "w") as f:
-            f.write(proof.export_plain_text())
-        print(f"✓ Exported to {file}")
-    elif file.endswith('.tex'):
-        with open(file, "w") as f:
-            f.write(proof.export_latex())
-        print(f"✓ Exported to {file}")
-    else:
-        print("✗ Unknown export format. Use: 'export proof.txt' or 'export proof.tex'")
 
 def execute_command(cmd, proof, initial_steps):
     parts = cmd.split()
@@ -147,8 +137,10 @@ def execute_command(cmd, proof, initial_steps):
         if fmt == "tex":
             export_tex(proof, filename)
             print(f"✓ Exported to {filename}.tex and {filename}.pdf")
+        elif fmt == "txt":
+            export_txt(proof, filename)
         else:
-            print("Unknown format. Supported formats: tex")
+            print("Unknown format. Supported formats: tex, txt")
         return False
 
     if cmd.lower().startswith('goal '):
