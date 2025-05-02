@@ -3,7 +3,7 @@ from deducto.core.expr import *
 def modus_ponens(implication: Implies, premise: Expr):
     """
     premise: P
-    implication: P -> Q
+    implication: P → Q
     conclusion: Q
     """
     if not isinstance(implication, Implies):
@@ -14,9 +14,9 @@ def modus_ponens(implication: Implies, premise: Expr):
 
 def modus_tollens(implication: Implies, negation: Not):
     """
-    negation: not Q
-    implication: P -> Q
-    conclusion: not P
+    negation: ¬Q
+    implication: P → Q
+    conclusion: ¬P
     """
     if not isinstance(implication, Implies):
         raise TypeError("Invalid type for modus tollens: Expected Implies for implication")
@@ -28,9 +28,9 @@ def modus_tollens(implication: Implies, negation: Not):
 
 def hypothetical_syllogism(implication1: Implies, implication2: Implies):
     """
-    implication1: P -> Q
-    implication2: Q -> R
-    conclusion: P -> R
+    implication1: P → Q
+    implication2: Q → R
+    conclusion: P → R
     """
     if not isinstance(implication1, Implies):
         raise TypeError("Invalid type for hypothetical syllogism: Expected Implies for implication1")
@@ -42,8 +42,8 @@ def hypothetical_syllogism(implication1: Implies, implication2: Implies):
 
 def disjunctive_syllogism(disjunction: Or, negation: Not):
     """
-    disjunction: P or Q
-    negation: not P
+    disjunction: P ∨ Q
+    negation: ¬P
     conclusion: Q
     """
     if not isinstance(disjunction, Or):
@@ -57,13 +57,13 @@ def disjunctive_syllogism(disjunction: Or, negation: Not):
 def addition(premise: Expr, antecedent: Expr):
     """
     premise: P
-    conclusion: P or Q
+    conclusion: P ∨ Q
     """
     return Or(premise, antecedent)
 
 def simplification(conjunction: And):
     """
-    conjunction: P and Q
+    conjunction: P ∧ Q
     conclusion: P
     """
     if not isinstance(conjunction, And):
@@ -74,14 +74,14 @@ def conjunction(antecedent: Expr, consequent: Expr):
     """
     antecedent: P
     consequent: Q
-    conclusion: P and Q
+    conclusion: P ∧ Q
     """
     return And(antecedent, consequent)
 
 def resolution(disjunction1: Or, disjunction2: Or):
     """
-    disjunction1: P or Q
-    disjunction2: not P or R
+    disjunction1: P ∨ Q
+    disjunction2: ¬P ∨ R
     """
     if not isinstance(disjunction1, Or):
         raise TypeError("Invalid type for resolution: Expected Or for disjunction1")
