@@ -23,7 +23,7 @@ def format_expr(expr):
     )
 
 
-def generate_structured_latex_from_proofstate(proof: ProofState, filepath: str):
+def export_tex(proof: ProofState, filepath: str):
     doc = Document()
 
     # Assumptions section

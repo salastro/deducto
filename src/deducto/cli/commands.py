@@ -6,7 +6,7 @@ from prompt_toolkit.document import Document
 from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
 from deducto.rules.apply import apply_rule, list_rules
-from deducto.export.tex import generate_structured_latex_from_proofstate
+from deducto.export.tex import export_tex
 from deducto.cli.parser import parse
 
 
@@ -145,7 +145,7 @@ def execute_command(cmd, proof, initial_steps):
         fmt = parts[1]
         filename = parts[2]
         if fmt == "tex":
-            generate_structured_latex_from_proofstate(proof, filename)
+            export_tex(proof, filename)
             print(f"✓ Exported to {filename}.tex and {filename}.pdf")
         else:
             print("Unknown format. Supported formats: tex")

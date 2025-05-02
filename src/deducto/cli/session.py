@@ -6,7 +6,7 @@ from prompt_toolkit.completion import WordCompleter
 from deducto.cli.commands import execute_command, CommandCompleter
 from deducto.cli.utils import get_goal, get_premises, get_variables
 from deducto.core.proof import ProofState
-from deducto.export.tex import generate_structured_latex_from_proofstate
+from deducto.export.tex import export_tex
 
 
 def clear_line():
@@ -59,7 +59,7 @@ def run_proof_session():
                 export = input("Export to LaTeX? (y/n): ").lower()
                 if export == 'y':
                     filepath = input("Enter output path prefix (no extension): ").strip()
-                    generate_structured_latex_from_proofstate(proof, filepath)
+                    export_tex(proof, filepath)
                     print(f"✓ Exported to {filepath}.tex and {filepath}.pdf")
                 else:
                     print("Export skipped.")
