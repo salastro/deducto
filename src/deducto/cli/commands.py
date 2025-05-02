@@ -103,7 +103,7 @@ def execute_command(cmd, proof, initial_steps):
 
     if cmd.lower() == 'list':
         print("Available rules:")
-        for rule in proof.rules:
+        for rule in list_rules():
             print(f"  {rule}")
         return False
 
