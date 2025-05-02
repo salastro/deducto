@@ -24,15 +24,24 @@ class Token:
         return f'Token({self.type}, {self.value})'
 
 def tokenize(text):
-    regex = '|'.join(f'({pattern})' for pattern, _ in TOKEN_SPEC) # create an "or" regex from patterns
+    regex_parts = [f'({pattern})' for pattern, _ in TOKEN_SPEC]
+    regex = '|'.join(regex_parts)
     types = [type_ for _, type_ in TOKEN_SPEC]
-    for match in re.finditer(regex, text): # find all non-overlapping matches
+
+    pos = 0
+    while pos < len(text):
+        match = re.match(regex, text[pos:])
+        if not match:
+            raise SyntaxError(f"Invalid token at position {pos}: '{text[pos]}'")
+
         for i, type_ in enumerate(types):
-            # check if match is not None to skip whitespace
-            # match.group(i + 1) cause group(0) is the whole match
-            if type_ and match.group(i + 1):
-                yield Token(type_, match.group(i + 1)) # return match without terminating function
+            value = match.group(i + 1)
+            if value is not None:
+                if type_ is not None:  # Skip whitespace
+                    yield Token(type_, value)
                 break
+
+        pos += len(match.group(0))
 
 class Parser:
     def __init__(self, tokens):
