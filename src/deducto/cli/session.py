@@ -4,7 +4,7 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
 
 from deducto.cli.commands import execute_command, CommandCompleter
-from deducto.cli.utils import get_goal, get_premises, get_variables
+from deducto.core.utils import get_goal, get_premises, get_variables
 from deducto.core.proof import ProofState
 from deducto.export.tex import export_tex
 

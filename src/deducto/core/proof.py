@@ -1,7 +1,10 @@
+from copy import deepcopy
 from typing import List
+
 from deducto.core.expr import *
+from deducto.core.utils import parse_path, resolve_path, set_path
 from deducto.rules.apply import *
-from deducto.cli.utils import parse_path, resolve_path, set_path
+
 
 class ProofStep:
     def __init__(self, result: Expr, rule: str, premises: List[int]):

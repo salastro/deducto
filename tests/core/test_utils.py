@@ -1,7 +1,7 @@
 # tests/test_cli_utils.py
 
 import pytest
-from deducto.cli import utils
+from deducto.core import utils
 from deducto.core.expr import *
 
 def test_resolve_path():

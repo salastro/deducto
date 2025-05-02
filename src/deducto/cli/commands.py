@@ -3,7 +3,7 @@ from copy import deepcopy
 from prompt_toolkit.completion import Completer, WordCompleter, NestedCompleter
 from prompt_toolkit.document import Document
 
-from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
+from deducto.core.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
 from deducto.rules.apply import list_rules
 from deducto.export.tex import export_tex
