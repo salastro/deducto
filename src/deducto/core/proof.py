@@ -28,20 +28,38 @@ class ProofState:
             print(f"  {i + 1}. {step}")
         print(f"Goal: {self.goal}")
 
-    def try_rule(self, rule: str, premise_indices: List[int]) -> bool:
+    def try_rule(self, rule: str, targets: List[str]) -> bool:
         try:
-            premises = [self.steps[i].result for i in premise_indices]
-            result = apply_rule(rule, premises)
-            if result is None:
-                print(f"✗ Rule '{rule}' not applicable to given premises.")
-                return False
-            self.steps.append(ProofStep(result, rule, premise_indices))
-            if result == self.goal:
+            if '.' in targets[0]:  # handle subexpression
+                idx, path = parse_path(targets[0])
+                expr = deepcopy(self.steps[idx].result)
+                subexpr = resolve_path(expr, path)
+                result = apply_rule(rule, [subexpr])
+                if result is None:
+                    print(f"✗ Rule '{rule}' not applicable at {targets[0]}")
+                    return False
+                set_path(expr, path, result)
+                subnode = '.'.join(targets[0].split('.')[1:])
+                self.steps.append(ProofStep(expr, f"{rule} at {subnode}", [idx]))
+            else:
+                premise_indices = [int(t) - 1 for t in targets]
+                premises = [self.steps[i].result for i in premise_indices]
+                result = apply_rule(rule, premises)
+                if result is None:
+                    print(f"✗ Rule '{rule}' not applicable to given premises.")
+                    return False
+                self.steps.append(ProofStep(result, rule, premise_indices))
+
+            if self.steps[-1].result == self.goal:
                 print("✓ Goal reached!")
                 self.show()
             return True
+
         except IndexError:
-            print("✗ Invalid premise index.")
+            print("✗ Invalid step index.")
+            return False
+        except Exception as e:
+            print(f"✗ Error applying rule: {e}")
             return False
 
     # def list_applicable(self):

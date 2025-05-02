@@ -97,6 +97,7 @@ def export_proof(proof, file):
         print("✗ Unknown export format. Use: 'export proof.txt' or 'export proof.tex'")
 
 def execute_command(cmd, proof, initial_steps):
+    parts = cmd.split()
     if cmd.lower() == 'exit':
         return True
 
@@ -138,7 +139,6 @@ def execute_command(cmd, proof, initial_steps):
         return False
 
     if cmd.lower().startswith('export '):
-        parts = cmd.split()
         if len(parts) != 3:
             print("Usage: export <format> <filename>")
             return False
@@ -152,7 +152,6 @@ def execute_command(cmd, proof, initial_steps):
         return False
 
     if cmd.lower().startswith('goal '):
-        parts = cmd.split()
         if len(parts) < 2:
             print("Usage: goal <expr>")
             return False
@@ -165,7 +164,6 @@ def execute_command(cmd, proof, initial_steps):
         return False
 
     if cmd.lower().startswith('assume '):
-        parts = cmd.split()
         if len(parts) < 2:
             print("Usage: assume <expr>")
             return False
@@ -194,8 +192,6 @@ def execute_command(cmd, proof, initial_steps):
             return False
 
     if cmd.lower().startswith('apply '):
-
-        parts = cmd.split()
         rule = parts[1]
         targets = parts[2:]
 
@@ -203,19 +199,7 @@ def execute_command(cmd, proof, initial_steps):
             print("No targets specified.")
             return False
 
-        if '.' in targets[0]:  # subexpression
-            subnode = '.'.join(targets[0].split('.')[1:])
-            idx, file = parse_path(targets[0])
-            expr = deepcopy(proof.steps[idx].result)
-            subexpr = resolve_path(expr, file)
-            result = apply_rule(rule, [subexpr])
-            if result is None:
-                raise ValueError(f"Rule '{rule}' not applicable at {targets[0]}")
-            set_path(expr, file, result)
-            proof.steps.append(ProofStep(expr, f"{rule} at {subnode}", [idx]))
-        else:
-            indices = [int(t) - 1 for t in targets]
-            proof.try_rule(rule, indices)
+        proof.try_rule(rule, targets)
 
     else:
         raise ValueError("Unknown command")
