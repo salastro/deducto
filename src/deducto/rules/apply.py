@@ -66,6 +66,24 @@ def apply_rule(rule: str, premises: List[Expr]) -> Expr:
 #                 suggestions.append(("iff_elim_right", [i]))
 #     return suggestions
 
+def get_rule_explanation(rule: str) -> str:
+    """
+    Get the explanation (docstring) of the rule given
+    ---
+    :param rule: The name of the rule
+    :return: The docstring of the rule
+    :raises ValueError: If the rule given does not exist (or at least is not implemented)
+    """
+    rules = list_rules()
+    # Check if the rule exists in the inference or equivalence modules
+    if rule in rules:
+        # Get the function object for the rule
+        rule_func = getattr(inference, rule, None) or getattr(equivalence, rule, None)
+        return rule_func.__doc__
+
+    else:
+        raise ValueError(f"Rule '{rule}' does not exist")
+
 if __name__ == '__main__':
     from deducto.parser import parse
     from copy import deepcopy
