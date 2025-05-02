@@ -76,7 +76,11 @@ Proof Steps:
 
 ## Commands
 
+- **help**: Show help information for commands.
 - **apply <rule> <target>**: Apply a logical rule to the specified targets. Rules include inference and equivalence rules.
+- **assume <premise>**: Add a new premise to the current context.
+- **goal <goal>**: Set a new goal to prove.
+- **list**: List all available rules and their descriptions.
 - **undo**: Undo the last step.
 - **delete <n>**: Delete the step corresponding to index `n`.
 - **reset**: Reset to the original assumptions (premises).
