@@ -7,13 +7,14 @@ from deducto.cli.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
 from deducto.rules.apply import apply_rule, list_rules
 from deducto.export.tex import generate_structured_latex_from_proofstate
+from deducto.cli.parser import parse
 
 
 class CommandCompleter(Completer):
     def __init__(self, proof):
         self.proof = proof
         self.rules = list_rules()
-        self.commands = ['apply', 'undo', 'delete', 'reset', 'exit', 'export']
+        self.commands = ['apply', 'undo', 'delete', 'reset', 'exit', 'export', 'assume', 'goal', 'help', 'list']
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor.lstrip()
@@ -99,6 +100,27 @@ def execute_command(cmd, proof, initial_steps):
     if cmd.lower() == 'exit':
         return True
 
+    if cmd.lower() == 'list':
+        print("Available rules:")
+        for rule in proof.rules:
+            print(f"  {rule}")
+        return False
+
+    if cmd.lower() == 'help':
+        print("Commands:")
+        print("  apply <rule> <target> - Apply a rule to the specified targets.")
+        print("  goal <expr> - Set the goal expression.")
+        print("  assume <expr> - Add an assumption.")
+        print("  list - List available rules.")
+        print("  exact - Check if the goal is reached.")
+        print("  undo - Undo the last step.")
+        print("  delete <n> - Delete step n.")
+        print("  reset - Reset to original assumptions.")
+        print("  export <format> <filename> - Export proof to specified format.")
+        print("  exit - Exit the session.")
+        print("  help - Show this help message.")
+        return False
+
     if cmd.lower() == 'undo':
         undo_last_step(proof, initial_steps)
         return False
@@ -128,6 +150,48 @@ def execute_command(cmd, proof, initial_steps):
         else:
             print("Unknown format. Supported formats: tex")
         return False
+
+    if cmd.lower().startswith('goal '):
+        parts = cmd.split()
+        if len(parts) < 2:
+            print("Usage: goal <expr>")
+            return False
+        goal_str = ' '.join(parts[1:])
+        try:
+            proof.goal = parse(goal_str)
+            print(f"✓ Goal updated to: {proof.goal}")
+        except Exception as e:
+            print(f"✗ Failed to parse goal: {e}")
+        return False
+
+    if cmd.lower().startswith('assume '):
+        parts = cmd.split()
+        if len(parts) < 2:
+            print("Usage: assume <expr>")
+            return False
+        assumption_str = ' '.join(parts[1:])
+        if not assumption_str:
+            print("✗ No assumption provided.")
+            return False
+        try:
+            expr = parse(assumption_str)
+            proof.assumptions.append(expr)
+            proof.steps.append(ProofStep(expr, "assumption", []))
+            print(f"✓ Assumption added: {expr}")
+        except Exception as e:
+            print(f"✗ Failed to parse assumption: {e}")
+        return False
+
+    if cmd.lower() == 'exact':
+        if proof.goal is None:
+            print("No goal set.")
+            return False
+        if proof.steps[-1].result == proof.goal:
+            print("✓ Goal reached!")
+            return True
+        else:
+            print("✗ Goal not reached.")
+            return False
 
     if cmd.lower().startswith('apply '):
 
