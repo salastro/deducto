@@ -1,5 +1,6 @@
 from deducto.core.expr import *
 
+
 def commutative_and(expr: And) -> And:
     """
     And(a, b) = And(b, a)
@@ -7,7 +8,6 @@ def commutative_and(expr: And) -> And:
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
     return And(expr.right, expr.left)
-
 
 def associative_and(expr: And) -> And:
     """
@@ -18,7 +18,7 @@ def associative_and(expr: And) -> And:
     if not isinstance(expr.left, And):
         raise TypeError("Expected the left operand to be an instance of And")
     return And(expr.left.left, And(expr.left.right, expr.right))
-    
+
 def commutative_or(expr: Or) -> Or:
     """
     Or(a, b) = Or(b, a)
@@ -128,6 +128,8 @@ def negation(expr: Not) -> Expr:
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Not")
+    if not isinstance(expr.negated, Not):
+        raise TypeError("Expected double negation")
     return expr.negated.negated
 
 def identity_or(expr: Or) -> Expr:
