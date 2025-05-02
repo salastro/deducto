@@ -5,7 +5,7 @@ from prompt_toolkit.document import Document
 
 from deducto.core.utils import all_paths, parse_path, resolve_path, set_path
 from deducto.core.proof import ProofStep
-from deducto.rules.apply import list_rules
+from deducto.rules.apply import list_rules, get_rule_explanation
 from deducto.export.tex import export_tex
 from deducto.export.txt import export_txt
 from deducto.cli.parser import parse
@@ -60,6 +60,13 @@ class CommandCompleter(Completer):
                     completer = WordCompleter(step_refs, ignore_case=True)
                     yield from completer.get_completions(new_document, complete_event)
 
+                elif command == 'help':
+                    parts = remaining_text.split()
+                    if (
+                        len(parts) == 0 or (len(parts) == 1 and remaining_text[-1] != " ")
+                    ): # the rule is not or not fully entered
+                        completer = WordCompleter(self.rules, ignore_case=True)
+                        yield from completer.get_completions(new_document, complete_event)
 
         else:
             # Complete command names
@@ -97,19 +104,26 @@ def execute_command(cmd, proof, initial_steps):
             print(f"  {rule}")
         return False
 
-    if cmd.lower() == 'help':
-        print("Commands:")
-        print("  apply <rule> <target> - Apply a rule to the specified targets.")
-        print("  goal <goal> - Set the goal expression.")
-        print("  assume <premise> - Add an assumption.")
-        print("  list - List available rules.")
-        print("  exact - Check if the goal is reached.")
-        print("  undo - Undo the last step.")
-        print("  delete <n> - Delete step n.")
-        print("  reset - Reset to original assumptions.")
-        print("  export <format> <filename> - Export proof to specified format.")
-        print("  exit - Exit the session.")
-        print("  help - Show this help message.")
+    if cmd.lower().startswith('help'):
+        if len(parts) == 1:
+            print("Commands:")
+            print("  apply <rule> <target> - Apply a rule to the specified targets.")
+            print("  goal <goal> - Set the goal expression.")
+            print("  assume <premise> - Add an assumption.")
+            print("  list - List available rules.")
+            print("  exact - Check if the goal is reached.")
+            print("  undo - Undo the last step.")
+            print("  delete <n> - Delete step n.")
+            print("  reset - Reset to original assumptions.")
+            print("  export <format> <filename> - Export proof to specified format.")
+            print("  exit - Exit the session.")
+            print("  help - Show this help message.")
+            print("  help <rule> - Get help about a rule.")
+        elif len(parts) == 2:
+            rule = parts[1]
+            print(get_rule_explanation(rule))
+        else:
+            print("Usage: help or help <rule>")
         return False
 
     if cmd.lower() == 'undo':
@@ -194,7 +208,7 @@ def execute_command(cmd, proof, initial_steps):
         proof.try_rule(rule, targets)
 
     else:
-        raise ValueError("Unknown command")
+        raise ValueError(f"Unknown command '{cmd}'")
 
     if proof.goal and proof.steps[-1].result == proof.goal:
         return True

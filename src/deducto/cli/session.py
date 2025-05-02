@@ -49,6 +49,8 @@ def run_proof_session():
     session = PromptSession(completer=completer)
 
     print("Commands: apply <rule> <targets>, undo, delete <n>, reset, exit")
+    print("For help about the commands, enter: help")
+    print("For help about a rule, enter: help <rule>")
 
     while True:
         try:
