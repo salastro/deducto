@@ -3,7 +3,7 @@ from deducto.core.expr import *
 
 def commutative_and(expr: And) -> And:
     """
-    And(a, b) = And(b, a)
+    a ∧ b ⇔ b ∧ a
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -11,7 +11,7 @@ def commutative_and(expr: And) -> And:
 
 def associative_and(expr: And) -> And:
     """
-    And(And(a, b), c) = And(a, And(b, c))
+    (a ∧ b) ∧ c ⇔ a ∧ (b ∧ c)
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -21,7 +21,7 @@ def associative_and(expr: And) -> And:
 
 def commutative_or(expr: Or) -> Or:
     """
-    Or(a, b) = Or(b, a)
+    a ∨ b ⇔ b ∨ a
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -29,7 +29,7 @@ def commutative_or(expr: Or) -> Or:
 
 def associative_or(expr: Or) -> Or:
     """
-    Or(Or(a, b), c) = Or(a, Or(b, c))
+    (a ∨ b) ∨ c ⇔ a ∨ (b ∨ c)
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -39,8 +39,7 @@ def associative_or(expr: Or) -> Or:
 
 def distributive_and(expr: And) -> Or:
     """
-    Distributive property of And over Or
-    And(a, Or(b, c)) = Or(And(a, b), And(a, c))
+    a ∧ (b ∨ c) ⇔ (a ∧ b) ∨ (a ∧ c)
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -50,8 +49,7 @@ def distributive_and(expr: And) -> Or:
 
 def distributive_or(expr: Or) -> And:
     """
-    Distributive property of Or over And
-    Or(a, And(b, c)) = And(Or(a, b), Or(a, c))
+    a ∨ (b ∧ c) ⇔ (a ∨ b) ∧ (a ∨ c)
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -61,9 +59,8 @@ def distributive_or(expr: Or) -> And:
 
 def idempotent(expr: Expr) -> Expr:
     """
-    Idempotent property of And and Or
-    And(a, a) = a
-    Or(a, a) = a
+    a ∧ a ⇔ a
+    a ∨ a ⇔ a
     """
     if not isinstance(expr, And) and not isinstance(expr, Or):
         raise TypeError("Expected an instance of And or Or")
@@ -73,8 +70,7 @@ def idempotent(expr: Expr) -> Expr:
 
 def absorption_and(expr: And) -> Expr:
     """
-    Absorption property
-    And(a, Or(a, b)) = a
+    a ∧ (a ∨ b) ⇔ a
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -86,8 +82,7 @@ def absorption_and(expr: And) -> Expr:
 
 def absorption_or(expr: Or) -> Expr:
     """
-    Absorption property
-    Or(a, And(a, b)) = a
+    a ∨ (a ∧ b) ⇔ a
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -99,8 +94,7 @@ def absorption_or(expr: Or) -> Expr:
 
 def demorgan_and(expr: Not) -> Or:
     """
-    De Morgan's law for And
-    Not(And(a, b)) = Or(Not(a), Not(b))
+    ¬(a ∧ b) ⇔ ¬a ∨ ¬b
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of And")
@@ -111,8 +105,7 @@ def demorgan_and(expr: Not) -> Or:
 
 def demorgan_or(expr: Not) -> And:
     """
-    De Morgan's law for Or
-    Not(Or(a, b)) = And(Not(a), Not(b))
+    ¬(a ∨ b) ⇔ ¬a ∧ ¬b
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Or")
@@ -123,8 +116,7 @@ def demorgan_or(expr: Not) -> And:
 
 def negation(expr: Not) -> Expr:
     """
-    Negation property
-    Not(Not(a)) = a
+    ¬(¬a) ⇔ a
     """
     if not isinstance(expr, Not):
         raise TypeError("Expected an instance of Not")
@@ -134,8 +126,7 @@ def negation(expr: Not) -> Expr:
 
 def identity_or(expr: Or) -> Expr:
     """
-    Identity Law of Or
-    Or(a, False) = a
+    a ∨ F ⇔ a
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -145,8 +136,7 @@ def identity_or(expr: Or) -> Expr:
 
 def identity_and(expr: And) -> Expr:
     """
-    Identity Law of And
-    And(a, True) = a
+    a ∧ T ⇔ a
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -156,8 +146,7 @@ def identity_and(expr: And) -> Expr:
 
 def domination_or(expr: Or) -> TrueExpr:
     """
-    Domination Law of Or
-    Or(a, True) = True
+    a ∨ T ⇔ T
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -167,8 +156,7 @@ def domination_or(expr: Or) -> TrueExpr:
 
 def domination_and(expr: And) -> FalseExpr:
     """
-    Domination Law of And
-    And(a, False) = False
+    a ∧ F ⇔ F
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -178,7 +166,7 @@ def domination_and(expr: And) -> FalseExpr:
 
 def contradiction(expr: And) -> FalseExpr:
     """
-    And(a, Not(a)) = False
+    a ∧ ¬a ⇔ F
     """
     if not isinstance(expr, And):
         raise TypeError("Expected an instance of And")
@@ -188,7 +176,7 @@ def contradiction(expr: And) -> FalseExpr:
 
 def excluded_middle(expr: Or) -> TrueExpr:
     """
-    Or(a, Not(a)) = True
+    a ∨ ¬a ⇔ T
     """
     if not isinstance(expr, Or):
         raise TypeError("Expected an instance of Or")
@@ -198,7 +186,7 @@ def excluded_middle(expr: Or) -> TrueExpr:
 
 def material_implication(expr: Implies) -> Or:
     """
-    Implies(P, Q) = Or(Not(P), Q)
+    P → Q ⇔ ¬P ∨ Q
     """
     if not isinstance(expr, Implies):
         raise TypeError("Expected an instance of Implies")
@@ -206,7 +194,7 @@ def material_implication(expr: Implies) -> Or:
 
 def biconditional_elimination(expr: Iff) -> And:
     """
-    Iff(P, Q) = And(Implies(P, Q), Implies(Q, P))
+    P ↔ Q ⇔ (P → Q) ∧ (Q → P)
     """
     if not isinstance(expr, Iff):
         raise TypeError("Expected an instance of Iff")
@@ -214,7 +202,7 @@ def biconditional_elimination(expr: Iff) -> And:
 
 def xor_decomposition(expr: Xor) -> Or:
     """
-    Xor(P, Q) = And(Or(P, Q), Not(And(P, Q)))
+    P ⊕ Q ⇔ (P ∨ Q) ∧ ¬(P ∧ Q)
     """
     if not isinstance(expr, Xor):
         raise TypeError("Expected an instance of Xor")
