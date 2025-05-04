@@ -79,8 +79,13 @@ def get_rule_explanation(rule: str) -> str:
     if rule in rules:
         # Get the function object for the rule
         rule_func = getattr(inference, rule, None) or getattr(equivalence, rule, None)
-        return rule_func.__doc__
-
+        explanation = rule_func.__doc__
+        if explanation:
+            # Remove leading/trailing whitespace and newlines
+            explanation = explanation.strip()
+            return explanation
+        else:
+            return f"No explanation available for rule '{rule}'"
     else:
         raise ValueError(f"Rule '{rule}' does not exist")
 
